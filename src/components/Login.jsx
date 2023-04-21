@@ -24,31 +24,38 @@ import axios from "axios";
     setSiggned(!siggned);
   };
 
-  const LoginHandler = (values) => {
-    let mainData = { ...values };
+  const LoginHandler = async (data) => {
     const URL = "https://todo-api.ctd.academy/v1";
     const path = siggned ? "/users/login" : "/users";
     let URI = URL + path;
-    console.log(mainData);
+
+    const payload = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      password: data.password,
+    };
 
     const config = {
-      'method': "post",
-      'headers': {
+      method: "POST",
+      headers: {
         "Content-Type": "application/json",
       },
-      'body': JSON.stringify(mainData),
+      data: JSON.stringify(payload),
     };
     console.log(config);
     try {
-      const response = axios.post(URI, config);
+      const response = await axios.post(URI,payload, config);
       let resJS = response.data;
 
       if (resJS.jwt) {
         localStorage.setItem("jwt", resJS.jwt);
+        location.reload()
       }
     } catch {
       (err) => console.log(err);
     }
+    console.log(data);
   };
 
   const passwordRules = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
@@ -105,17 +112,17 @@ import axios from "axios";
         >
           <Heading>{siggned ? "Log in" : "Sign Up"}</Heading>
 
-          <TextField
+          {!siggned &&<TextField
             label="First Name"
             name="firstName"
             placeholder="Enter first name..."
-          ></TextField>
+          ></TextField>}
 
-          <TextField
+          {!siggned && <TextField
             label="Last Name"
             name="lastName"
             placeholder="Enter first name..."
-          ></TextField>
+          ></TextField>}
 
           <TextField
             label="Email"

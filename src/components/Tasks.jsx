@@ -1,6 +1,7 @@
 import {
   HStack,
   Heading,
+  Badge,
   VStack,
   FormLabel,
   Input,
@@ -15,17 +16,22 @@ import {
   Checkbox,
 } from "@chakra-ui/react";
 
-import { React, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
+// eslint-disable-next-line react/prop-types
 const Tasks = ({ token }) => {
   const [name, setName] = useState("");
   const [task, setTask] = useState("");
   const [taskList, setTaskList] = useState([]);
+  const [incompleteCount, setIncompleteCount] = useState(0);
+  const [completeCount, setCompleteCount] = useState(0);
 
   useEffect(() => {
+    let controller = new AbortController();
     userNameHandler();
     taskHandler();
+    return () => controller?.abort();
   }, []);
 
   const URL = "https://todo-api.ctd.academy/v1";
@@ -51,10 +57,24 @@ const Tasks = ({ token }) => {
     }
   };
 
+  const counters = (data) => {
+    let completeCounter = 0;
+    let incompleteCounter = 0;
+    if (data) {
+      console.log(data);
+      data.map((i) => {
+        i.completed ? completeCounter++ : incompleteCounter++;
+      });
+      setCompleteCount(completeCounter);
+      setIncompleteCount(incompleteCounter);
+    }
+  };
+
   const taskHandler = async () => {
     console.log("Obteniendo la lista de tareas...");
     const response = await axios.get(uriTasks, settings);
     setTaskList(response.data);
+    counters(response.data);
   };
 
   //func que crea una nueva tarea
@@ -98,7 +118,7 @@ const Tasks = ({ token }) => {
 
     if (logOut) {
       localStorage.clear();
-      location.reload()
+      location.reload();
     }
   };
 
@@ -120,14 +140,16 @@ const Tasks = ({ token }) => {
       >
         <h3>{name}</h3>
         <Avatar bg="teal.500" />
-        <Button colorScheme="red" onClick={logOutHandler}>Log out</Button>
+        <Button colorScheme="red" onClick={logOutHandler}>
+          Log out
+        </Button>
       </HStack>
       <Box width={"50%"} marginBottom={30} h={"20%"}>
         <Heading color={"grey"} textAlign={"center"} marginBottom={30}>
           ToDo List
         </Heading>
         <FormControl
-          bgColor={"rgb(220,220,220)"}
+          bgColor={"rgb(40,40,40)"}
           padding={5}
           borderRadius={5}
           h={"70%"}
@@ -136,11 +158,11 @@ const Tasks = ({ token }) => {
           <InputGroup>
             <Input
               type="text"
-              variant="outline"
-              fontSize={"2rem"}
+              variant="filled"
+              fontSize={"1.5rem"}
               borderColor={"grey"}
               placeholder="ex: excercise"
-              _placeholder={{ opacity: 0.4, color: "red" }}
+              _placeholder={{ opacity: 0.4, color: "white" }}
               value={task}
               onChange={(e) => {
                 setTask(e.target.value);
@@ -151,6 +173,7 @@ const Tasks = ({ token }) => {
                 type="button"
                 h="100%"
                 size="lg"
+                variant={"outline"}
                 colorScheme="green"
                 onClick={addTask}
               >
@@ -170,6 +193,16 @@ const Tasks = ({ token }) => {
         <Box width={"45%"} bgColor={"rgb(30,30,30)"} padding={4} h={"100%"}>
           <Heading color={"grey"} textAlign={"center"} marginBottom={30}>
             Yet to complete
+            <Badge
+              ml="10"
+              colorScheme="green"
+              fontSize={"1.5rem"}
+              variant={"outline"}
+              padding={"5px 10px"}
+              borderRadius={"50%"}
+            >
+              {incompleteCount}
+            </Badge>
           </Heading>
 
           <UnorderedList
@@ -245,6 +278,17 @@ const Tasks = ({ token }) => {
         <Box width={"45%"} bgColor={"rgb(30,30,30)"} padding={4} h={"100%"}>
           <Heading color={"grey"} textAlign={"center"} marginBottom={30}>
             Completed
+            <Badge
+              ml="10"
+              colorScheme="green"
+              color={'#59fa23'}
+              fontSize={"1.5rem"}
+              variant={"outline"}
+              padding={"5px 10px"}
+              borderRadius={"50%"}
+            >
+              {completeCount}
+            </Badge>
           </Heading>
 
           <UnorderedList
@@ -267,10 +311,10 @@ const Tasks = ({ token }) => {
                   item.completed && (
                     <ListItem
                       key={item.id}
-                      fontSize={22}
                       borderRadius={7}
-                      bgColor={"rgb(220,220,220)"}
+                      bgColor={"rgb(120,120,120)"}
                       h={"15%"}
+                      
                     >
                       <HStack
                         spacing={4}
@@ -288,15 +332,20 @@ const Tasks = ({ token }) => {
                             handleCompletionToggle(item.id, e.target.checked)
                           }
                         />
-                        <Box flexGrow={1} alignItems="center">
+                        <Box flexGrow={1} fontWeight={'500'} fontSize={'1.5rem'} alignItems="center">
                           {item.description}
                         </Box>
                         <Button
                           size="lg"
                           h={"100%"}
+                          border={'3px solid green'}
                           position={"relative"}
-                          right={-22}
-                          colorScheme={item.completed ? "green" : "yellow"}
+                          right={'-16px'}
+                          colorScheme={"green"}
+                          color={'#59fa23'}
+                          textShadow={'green 2px 2px'}
+                          variant={'outline'}
+                          fontWeight={'600'}
                           onClick={() =>
                             handleCompletionToggle(item.id, !item.completed)
                           }
@@ -307,6 +356,10 @@ const Tasks = ({ token }) => {
                           size="lg"
                           h={"100%"}
                           colorScheme="red"
+                          variant={'outline'}
+                          fontWeight={'600'}
+                          textShadow={'black 2px 1px'}
+                          border={'3px solid red'}
                           onClick={() => handleDeleteTask(item.id)}
                         >
                           Delete
