@@ -158,7 +158,7 @@ const Tasks = ({ token }) => {
           <InputGroup>
             <Input
               type="text"
-              variant="filled"
+              variant="outline"
               fontSize={"1.5rem"}
               borderColor={"grey"}
               placeholder="ex: excercise"
@@ -281,7 +281,6 @@ const Tasks = ({ token }) => {
             <Badge
               ml="10"
               colorScheme="green"
-              color={'#59fa23'}
               fontSize={"1.5rem"}
               variant={"outline"}
               padding={"5px 10px"}
@@ -311,10 +310,10 @@ const Tasks = ({ token }) => {
                   item.completed && (
                     <ListItem
                       key={item.id}
+                      fontSize={22}
                       borderRadius={7}
-                      bgColor={"rgb(120,120,120)"}
+                      bgColor={"rgb(220,220,220)"}
                       h={"15%"}
-                      
                     >
                       <HStack
                         spacing={4}
@@ -332,20 +331,15 @@ const Tasks = ({ token }) => {
                             handleCompletionToggle(item.id, e.target.checked)
                           }
                         />
-                        <Box flexGrow={1} fontWeight={'500'} fontSize={'1.5rem'} alignItems="center">
+                        <Box flexGrow={1} alignItems="center">
                           {item.description}
                         </Box>
                         <Button
                           size="lg"
                           h={"100%"}
-                          border={'3px solid green'}
                           position={"relative"}
-                          right={'-16px'}
-                          colorScheme={"green"}
-                          color={'#59fa23'}
-                          textShadow={'green 2px 2px'}
-                          variant={'outline'}
-                          fontWeight={'600'}
+                          right={-22}
+                          colorScheme={item.completed ? "green" : "yellow"}
                           onClick={() =>
                             handleCompletionToggle(item.id, !item.completed)
                           }
@@ -356,10 +350,6 @@ const Tasks = ({ token }) => {
                           size="lg"
                           h={"100%"}
                           colorScheme="red"
-                          variant={'outline'}
-                          fontWeight={'600'}
-                          textShadow={'black 2px 1px'}
-                          border={'3px solid red'}
                           onClick={() => handleDeleteTask(item.id)}
                         >
                           Delete
