@@ -18,6 +18,8 @@ import axios from "axios";
     iniValues.lastName = "";
     iniValues.email = "";
     iniValues.password = "";
+    iniValues.confirmPassword = "";
+
   }
 
   const siggnedHandler = () => {
@@ -81,10 +83,10 @@ import axios from "axios";
                   message: "Please create a stronger password",
                 })
                 .required("Required"),
-              /* confirmPassword: Yup
+             confirmPassword: Yup
                             .string()
                             .oneOf([Yup.ref("password"), ''], "Passwords must match")
-                            .required("Required"), */
+                            .required("Required"), 
             })
           : Yup.object({
               email: Yup.string("Enter you name")
@@ -107,7 +109,9 @@ import axios from "axios";
           mx="auto"
           w={{ base: "90%", md: 500 }}
           h="100vh"
-          justifyContent={"center"}
+          justify={"center"}
+          bgColor={"rgb(25,25,25)"}
+          color={'whiteAlpha.600'}
           onSubmit={formik.handleSubmit}
         >
           <Heading>{siggned ? "Log in" : "Sign Up"}</Heading>
@@ -121,7 +125,7 @@ import axios from "axios";
           {!siggned && <TextField
             label="Last Name"
             name="lastName"
-            placeholder="Enter first name..."
+            placeholder="Enter last name..."
           ></TextField>}
 
           <TextField
@@ -134,6 +138,11 @@ import axios from "axios";
             name="password"
             placeholder="Enter password..."
           ></TextField>
+          {!siggned &&<TextField
+            label="Confirm Password"
+            name="confirmPassword"
+            placeholder="Enter password..."
+          ></TextField>}
 
           <Button type="submit" variant="outline" colorScheme="teal">
             {!siggned ? "Register" : "Log in"}
@@ -146,7 +155,7 @@ import axios from "axios";
           >
             {siggned
               ? "Don't have an account? create one"
-              : "Already have an account, Log in"}
+              : "Already have an account?, Log in"}
           </Button>
         </VStack>
       )}
